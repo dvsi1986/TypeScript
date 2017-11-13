@@ -394,6 +394,16 @@ namespace ts {
         return result;
     }
 
+    export function mapIter<T, U>(iter: Iterator<T>, mapFn: (x: T) => U): U[] {
+        const result: U[] = [];
+        while (true) {
+            const { value, done } = iter.next();
+            if (done) break;
+            result.push(mapFn(value));
+        }
+        return result;
+    }
+
     // Maps from T to T and avoids allocation if all elements map to themselves
     export function sameMap<T>(array: T[], f: (x: T, i: number) => T): T[];
     export function sameMap<T>(array: ReadonlyArray<T>, f: (x: T, i: number) => T): ReadonlyArray<T>;
@@ -1282,6 +1292,7 @@ namespace ts {
          * Creates the array if it does not already exist.
          */
         add(key: string, value: T): T[];
+        addMany(key: string, value: ReadonlyArray<T>): T[];
         /**
          * Removes a value from an array of values associated with the key.
          * Does not preserve the order of those values.
@@ -1293,6 +1304,7 @@ namespace ts {
     export function createMultiMap<T>(): MultiMap<T> {
         const map = createMap<T[]>() as MultiMap<T>;
         map.add = multiMapAdd;
+        map.addMany = multiMapAddMany;
         map.remove = multiMapRemove;
         return map;
     }
@@ -1305,7 +1317,16 @@ namespace ts {
             this.set(key, values = [value]);
         }
         return values;
-
+    }
+    function multiMapAddMany<T>(this: MultiMap<T>, key: string, newValues: ReadonlyArray<T>) {
+        let values = this.get(key);
+        if (values) {
+            values.push(...newValues);
+        }
+        else {
+            this.set(key, values = [...newValues]);
+        }
+        return values;
     }
     function multiMapRemove<T>(this: MultiMap<T>, key: string, value: T) {
         const values = this.get(key);
