@@ -382,6 +382,20 @@ namespace ts {
         return array;
     }
 
+    export function filterIterator<T>(iter: Iterator<T>, test: (x: T) => boolean): Iterator<T> {
+        return {
+            next() {
+                while (true) {
+                    const res = iter.next();
+                    const { value, done } = res;
+                    if (done || test(value)) {
+                        return res;
+                    }
+                }
+            }
+        }
+    }
+
     export function filterMutate<T>(array: T[], f: (x: T, i: number, array: T[]) => boolean): void {
         let outIndex = 0;
         for (let i = 0; i < array.length; i++) {
@@ -939,6 +953,19 @@ namespace ts {
      */
     export function sort<T>(array: ReadonlyArray<T>, comparer: Comparer<T>) {
         return array.slice().sort(comparer);
+    }
+
+    export function arrayIterator<T>(array: ReadonlyArray<T>): Iterator<T> {
+        let i = 0;
+        return { next: () => {
+            if (i === array.length) {
+                return { value: undefined as never, done: true };
+            }
+            else {
+                i++;
+                return { value: array[i - 1], done: false };
+            }
+        }};
     }
 
     /**
