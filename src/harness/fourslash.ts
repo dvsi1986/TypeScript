@@ -2335,8 +2335,10 @@ Actual: ${stringify(fullActual)}`);
         public verifyOutliningSpans(spans: TextSpan[]) {
             const actual = this.languageService.getOutliningSpans(this.activeFile.fileName);
 
+            let t = `ACTUAL:\n${stringify(actual.map(s => ({ start: s.textSpan.start, end: s.textSpan.start + s.textSpan.length })))}\n\n\nEXPECTED:\n${stringify(spans.map(s => ({ start: s.start, end: s.end })))}`; //kill
+
             if (actual.length !== spans.length) {
-                this.raiseError(`verifyOutliningSpans failed - expected total spans to be ${spans.length}, but was ${actual.length}`);
+                this.raiseError(`verifyOutliningSpans failed - expected total spans to be ${spans.length}, but was ${actual.length}\n${t}`);
             }
 
             ts.zipWith(spans, actual, (expectedSpan, actualSpan, i) => {

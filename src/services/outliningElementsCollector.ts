@@ -113,6 +113,7 @@ namespace ts.OutliningElementsCollector {
                     // Check if the block is standalone, or 'attached' to some parent statement.
                     // If the latter, we want to collapse the block, but consider its hint span
                     // to be the entire span of the parent.
+                    //switch
                     if (parent.kind === SyntaxKind.DoStatement ||
                         parent.kind === SyntaxKind.ForInStatement ||
                         parent.kind === SyntaxKind.ForOfStatement ||
@@ -144,6 +145,7 @@ namespace ts.OutliningElementsCollector {
                     // Block was a standalone block.  In this case we want to only collapse
                     // the span of the block, independent of any parent span.
                     const span = createTextSpanFromNode(n);
+                    //don't return object literal, use helper
                     return {
                         textSpan: span,
                         hintSpan: span,
@@ -164,7 +166,7 @@ namespace ts.OutliningElementsCollector {
             case SyntaxKind.CaseBlock: {
                 const openBrace = findChildOfKind(n, SyntaxKind.OpenBraceToken, sourceFile);
                 const closeBrace = findChildOfKind(n, SyntaxKind.CloseBraceToken, sourceFile);
-                return makeOutliningSpan(n, openBrace, closeBrace, autoCollapse(n), /*useFullStart*/ true, sourceFile);
+                return makeOutliningSpan(n, openBrace, closeBrace, autoCollapse(n), /*useFullStart*/ true, sourceFile); //mostly dup of above (`n` vs `n.parent`)
             }
             // If the block has no leading keywords and is inside an array literal,
             // we only want to collapse the span of the block.
@@ -172,11 +174,11 @@ namespace ts.OutliningElementsCollector {
             case SyntaxKind.ObjectLiteralExpression:
                 const openBrace = findChildOfKind(n, SyntaxKind.OpenBraceToken, sourceFile);
                 const closeBrace = findChildOfKind(n, SyntaxKind.CloseBraceToken, sourceFile);
-                return makeOutliningSpan(n, openBrace, closeBrace, autoCollapse(n), /*useFullStart*/ !isArrayLiteralExpression(n.parent), sourceFile);
+                return makeOutliningSpan(n, openBrace, closeBrace, autoCollapse(n), /*useFullStart*/ !isArrayLiteralExpression(n.parent), sourceFile); //mostly dup
             case SyntaxKind.ArrayLiteralExpression:
                 const openBracket = findChildOfKind(n, SyntaxKind.OpenBracketToken, sourceFile);
                 const closeBracket = findChildOfKind(n, SyntaxKind.CloseBracketToken, sourceFile);
-                return makeOutliningSpan(n, openBracket, closeBracket, autoCollapse(n), /*useFullStart*/ !isArrayLiteralExpression(n.parent), sourceFile);
+                return makeOutliningSpan(n, openBracket, closeBracket, autoCollapse(n), /*useFullStart*/ !isArrayLiteralExpression(n.parent), sourceFile); //completely dup!!!
         }
     }
 
