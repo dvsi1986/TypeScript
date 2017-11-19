@@ -623,6 +623,7 @@ namespace ts {
         return !!findChildOfKind(n, kind, sourceFile);
     }
 
+    //make public!
     export function findChildOfKind(n: Node, kind: SyntaxKind, sourceFile?: SourceFileLike): Node | undefined {
         return forEach(n.getChildren(sourceFile), c => c.kind === kind && c);
     }
